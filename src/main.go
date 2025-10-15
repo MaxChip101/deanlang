@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"io"
 	"log"
 	"os"
@@ -36,36 +35,34 @@ func Format(content string) string {
 
 func Interperet(content string) error {
 	variables := make(map[string]byte)
+	jump_points := make(map[byte]int)
 	loaded := []byte{0}
 	mentioned_variable := ""
-	var condition_stack []int // figure it out
+	condition_state := 0
 
 	for i, v := range content {
+		if v != '~' && condition_state == 2 {
+			continue
+		}
+
 		switch v {
 		case ',': // unload current memory
 			loaded[0] = 0
-			fmt.Println("unloaded memory")
 		case '.': // load mentioned variable
 			loaded[0] = variables[mentioned_variable]
-			fmt.Println("loaded: ", loaded[0], " from variable: ", mentioned_variable)
 		case '!': // write loaded memory
 			_, err := os.Stdout.Write(loaded)
 			if err != nil {
 				return err
 			}
-			fmt.Println("wrote memory: ", loaded[0])
 		case '+': // increment loaded memory
 			loaded[0] += 1
-			fmt.Println("incremented memory to: ", loaded[0])
 		case '-': // decrement loaded memory
 			loaded[0] += 1
-			fmt.Println("decremented memory to: ", loaded[0])
 		case ';': // forget mentioned variable
 			mentioned_variable = ""
-			fmt.Println("forgot mentioned variable")
 		case ':': // save mentioned variable
 			variables[mentioned_variable] = loaded[0]
-			fmt.Println("saved: ", loaded[0], " to: ", mentioned_variable)
 		case '?': // read to memory
 			_, err := os.Stdin.Read(loaded)
 			if err == io.EOF {
@@ -73,28 +70,23 @@ func Interperet(content string) error {
 			} else if err != nil {
 				return err
 			}
-			fmt.Println("read: ", loaded[0])
 		case '/': // remove last character from mentioned variable
 			mentioned_variable = mentioned_variable[:len(mentioned_variable)-1]
-			fmt.Println("mentioned: ", mentioned_variable)
-		case '<': // go back by an amount
-			if i-int(loaded[0]) < 0 {
-				i = 0
+		case '*': // start jump
+			jump_points[loaded[0]] = i
+		case '&':
+			i = jump_points[loaded[0]]
+		case '~':
+			if variables[mentioned_variable] == loaded[0] && condition_state == 0 {
+				condition_state = 1
+				continue
+			} else if variables[mentioned_variable] != loaded[0] && condition_state == 0 {
+				condition_state = 2
 				continue
 			}
-			i -= int(loaded[0])
-		case '>': // go forward by an amount
-			if i+int(loaded[0]) >= len(content) {
-				return nil
-			}
-			i += int(loaded[0])
-		case '{': // condition start
-			condition_stack = append(condition_stack, i)
-		case '}': // condition end
-			condition_stack[len(condition_stack)-1]
+			condition_state = 0
 		default:
 			mentioned_variable += string(v)
-			fmt.Println("mentioned: ", mentioned_variable)
 		}
 	}
 	return nil
