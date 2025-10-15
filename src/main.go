@@ -38,7 +38,7 @@ func Interperet(content string) error {
 	variables := make(map[string]byte)
 	loaded := []byte{0}
 	mentioned_variable := ""
-	var condition_stack []byte // figure it out
+	var condition_stack []int // figure it out
 
 	for i, v := range content {
 		switch v {
@@ -89,7 +89,9 @@ func Interperet(content string) error {
 			}
 			i += int(loaded[0])
 		case '{': // condition start
+			condition_stack = append(condition_stack, i)
 		case '}': // condition end
+			condition_stack[len(condition_stack)-1]
 		default:
 			mentioned_variable += string(v)
 			fmt.Println("mentioned: ", mentioned_variable)
