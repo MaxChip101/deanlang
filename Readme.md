@@ -42,7 +42,7 @@ When needing to evaluate 2 values and do something based on if the condition is 
 
 #### Jumps
 
-When needing to travel to parts of your code it is useful to have jumps, to use jumps you need to have `*` and `&` or `<` or `>`. The `*` saves a position in your code as the loaded byte's value, for example: `++* # this makes a jump point with a value of 2 #`. To jump to these points you need to use `&`, this will jump to the jump point that has the same value as the loaded byte. These can be changed throughout the program if needed. The `<` will jump backwards by a set amount of steps, this is set by the loaded byte, The same is with `>` but forward, it will use the loaded byte's value to tell how far forward to jump for example: `+>! # The write was skipped #.
+When needing to travel to parts of your code it is useful to have jumps, to use jumps you need to have `*` and `&` or `<` or `>`. The `*` saves a position in your code with the referenced jump variable, for example: `my_jump* # this makes a jump point with a tag of my_jump #`. To jump to these points you need to use `&`, this will jump to the jump point that has the same referenced jump variable. These can be changed throughout the program if needed. The `<` will jump backwards by a set amount of steps, this is set by the loaded byte, The same is with `>` but forward, it will use the loaded byte's value to tell how far forward to jump for example: `+>! # The write was skipped #.
 
 #### Do Nothing
 
