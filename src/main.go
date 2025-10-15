@@ -66,17 +66,31 @@ func Interperet(content string) error {
 		case '?': // read to memory
 			_, err := os.Stdin.Read(loaded)
 			if err == io.EOF {
-				return nil
+				continue
 			} else if err != nil {
 				return err
 			}
 		case '/': // remove last character from mentioned variable
+			if len(mentioned_variable) <= 0 {
+				continue
+			}
 			mentioned_variable = mentioned_variable[:len(mentioned_variable)-1]
 		case '*': // start jump
 			jump_points[loaded[0]] = i
 		case '&':
 			i = jump_points[loaded[0]]
-		case '~':
+		case '<':
+			if i-int(loaded[0]) < 0 {
+				i = 0
+				continue
+			}
+			i -= int(loaded[0])
+		case '>':
+			if i+int(loaded[0]) > len(content) {
+				return nil
+			}
+			i += int(loaded[0])
+		case '|':
 			if variables[mentioned_variable] == loaded[0] && condition_state == 0 {
 				condition_state = 1
 				continue
@@ -85,6 +99,8 @@ func Interperet(content string) error {
 				continue
 			}
 			condition_state = 0
+		case '~':
+
 		default:
 			mentioned_variable += string(v)
 		}
