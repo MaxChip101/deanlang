@@ -1,0 +1,12 @@
+? // read from input 
++ // add to byte
+- // subtract from byte
+# // variables
+$()[ // for / if loop
+] // end loop
+! // write to the output
+
+: // save variable
+; // load variable
+. // unload
+, // 
