@@ -1,7 +1,6 @@
 package main
 
 import (
-	"io"
 	"log"
 	"os"
 	"path/filepath"
@@ -42,7 +41,7 @@ func Interperet(content string) error {
 
 	index := 0
 
-	for index < len(content)-1 {
+	for index < len(content) {
 
 		if content[index] != '~' && condition_state == 2 {
 			index++
@@ -69,18 +68,13 @@ func Interperet(content string) error {
 			variables[referenced] = main_byte[0]
 		case '?': // read to memory
 			_, err := os.Stdin.Read(main_byte)
-			if err == io.EOF {
-				index++
-				continue
-			} else if err != nil {
+			if err != nil {
 				return err
 			}
 		case '/': // remove last character from mentioned variable
-			if len(referenced) <= 0 {
-				index++
-				continue
+			if len(referenced) > 0 {
+				referenced = referenced[:len(referenced)-1]
 			}
-			referenced = referenced[:len(referenced)-1]
 		case '*': // start goto
 			goto_points[referenced] = index
 		case '&': // goto
@@ -102,12 +96,8 @@ func Interperet(content string) error {
 		case '|': // condition
 			if variables[referenced] == main_byte[0] && condition_state == 0 {
 				condition_state = 1
-				index++
-				continue
 			} else if variables[referenced] != main_byte[0] && condition_state == 0 {
 				condition_state = 2
-				index++
-				continue
 			}
 			condition_state = 0
 		case '~': // do nothing
