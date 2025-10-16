@@ -58,7 +58,7 @@ func Interperet(content string) error {
 		case '+': // increment loaded memory
 			loaded[0] += 1
 		case '-': // decrement loaded memory
-			loaded[0] += 1
+			loaded[0] -= 1
 		case ';': // forget mentioned variable
 			referenced = ""
 		case ':': // save mentioned variable
