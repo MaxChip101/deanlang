@@ -2,19 +2,39 @@
 
 ### About
 
-deanlang is an interpereted esoteric language that has a singular byte of memory that can be manipulated at once.
+deanlang is an interpereted esoteric scripting language
 
 ---
 
 ### Usage
 
-the command to use deanlang is `dean` which requires an input file which is the deanlang script.
+the command to use deanlang is `deanl` which requires an input file which is the deanlang script.
+
+The file extension for a deanlang script can be anything but it is recommended to use `.dl` to tell that it is a deanlang script
+
+---
+
+### Functionality
+
+In deanlang, there are a couple of things that you should keep in mind.
+
+#### Main Byte
+
+This is a single byte of memory that can be manipulated
+
+#### The Reference
+
+This is a string of characters that can determine the variable you're referencing, or what goto you're referencing
+
+#### References
+
+These are spots in memory that store: byte data, and goto points
 
 ---
 
 ### Syntax
 
-There are only a fre key words in the deanlang syntax which is to force simplicity.
+There are only a few key words in the deanlang syntax.
 
 #### Comments
 
@@ -22,11 +42,11 @@ The comments are `#`, you have to sandwich comments with the `#` to work, for ex
 
 #### Increment / Decrement
 
-Incrementing is when you increase the loaded byte by one by doing `+`. Decrementing is when you decrease the loaded byte by one by doing `-`.
+Incrementing is when you increase the main byte by one by doing `+`. Decrementing is when you decrease the main byte by one by doing `-`.
 
 #### I/O
 
-Input is when you get a single byte from stdin by doing `?` this saves it to the loaded byte. Output is when you write the loaded byte to stdout by doing `!`.
+Input is when you get a single byte from stdin by doing `?` this saves it to the loaded byte. Output is when you write the main byte to stdout by doing `!`.
 
 #### Variables
 
@@ -44,12 +64,12 @@ When needing to evaluate 2 values and do something based on if the condition is 
 
 When needing to travel to parts of your code it is useful to have jumps, to use jumps you need to have `*` and `&` or `<` or `>`. The `*` saves a position in your code with the referenced jump variable, for example: `my_jump* # this makes a jump point with a tag of my_jump #`. To jump to these points you need to use `&`, this will jump to the jump point that has the same referenced jump variable. These can be changed throughout the program if needed. The `<` will jump backwards by a set amount of steps, this is set by the loaded byte, The same is with `>` but forward, it will use the loaded byte's value to tell how far forward to jump for example: `+>! # The write was skipped #.
 
-#### Do Nothing
+#### Do Nothing / No Opp
 
 If for some reason you need a couple of characters that do nothing that fix your code then you can use `~` which does nothing and cannot be used as a variable
 
 ---
 
-### Examples
+### More
 
-in the examples directory
+You can find examples in [examples](examples/)
