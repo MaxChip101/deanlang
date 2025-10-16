@@ -40,12 +40,17 @@ func Interperet(content string) error {
 	referenced := ""
 	condition_state := 0
 
-	for i, v := range content {
-		if v != '~' && condition_state == 2 {
+	index := 0
+
+	for index < len(content) {
+
+		index++
+
+		if content[index] != '~' && condition_state == 2 {
 			continue
 		}
 
-		switch v {
+		switch content[index] {
 		case ',': // unload current memory
 			loaded[0] = 0
 		case '.': // load mentioned variable
@@ -72,24 +77,25 @@ func Interperet(content string) error {
 			}
 		case '/': // remove last character from mentioned variable
 			if len(referenced) <= 0 {
+				index++
 				continue
 			}
 			referenced = referenced[:len(referenced)-1]
 		case '*': // start jump
-			jump_points[referenced] = i
+			jump_points[referenced] = index
 		case '&': // jump
-			i = jump_points[referenced]
+			index = jump_points[referenced]
 		case '<': // jump left
-			if i-int(loaded[0]) < 0 {
-				i = 0
+			if index-int(loaded[0]) < 0 {
+				index = 0
 				continue
 			}
-			i -= int(loaded[0])
+			index -= int(loaded[0])
 		case '>': // jump right
-			if i+int(loaded[0]) > len(content) {
+			if index+int(loaded[0]) > len(content) {
 				return nil
 			}
-			i += int(loaded[0])
+			index += int(loaded[0])
 		case '|': // condition
 			if variables[referenced] == loaded[0] && condition_state == 0 {
 				condition_state = 1
@@ -102,7 +108,7 @@ func Interperet(content string) error {
 		case '~': // do nothing
 			continue
 		default:
-			referenced += string(v)
+			referenced += string(content[index])
 		}
 	}
 	return nil
