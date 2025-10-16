@@ -43,7 +43,7 @@ func Interperet(content string) error {
 
 	for index < len(content) {
 
-		if content[index] != '~' && condition_state == 2 {
+		if content[index] != '|' && condition_state == 2 {
 			index++
 			continue
 		}
@@ -93,17 +93,18 @@ func Interperet(content string) error {
 			}
 			index += int(main_byte[0])
 			continue
-		case '|': // condition
+		case '$': // condition check
 			if variables[referenced] == main_byte[0] && condition_state == 0 {
 				condition_state = 1
 			} else if variables[referenced] != main_byte[0] && condition_state == 0 {
 				condition_state = 2
 			}
+		case '|': // condition end
 			condition_state = 0
 		case '~': // do nothing
 			index++
 			continue
-		default:
+		default: // append to reference
 			referenced += string(content[index])
 		}
 		index++
