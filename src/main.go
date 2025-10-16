@@ -24,7 +24,7 @@ func Format(content string) string {
 			commented = !commented
 			continue
 		}
-		if commented || v == ' ' || v == '\t' || v == '\n' {
+		if commented || v == ' ' || v == '\t' || v == '\n' { // rempve commented code & white spaces
 			continue
 		}
 		new_content += string(v)
@@ -43,7 +43,7 @@ func Interperet(content string) error {
 
 	for index < len(content) {
 
-		if content[index] != '|' && condition_state == 2 {
+		if content[index] != '|' && condition_state == 2 { // while false, skip everything besides the if statement end
 			index++
 			continue
 		}
