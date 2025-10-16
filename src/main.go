@@ -85,6 +85,7 @@ func Interperet(content string) error {
 			jump_points[referenced] = index
 		case '&': // jump
 			index = jump_points[referenced]
+			continue
 		case '<': // jump left
 			if index-int(loaded[0]) < 0 {
 				index = 0
