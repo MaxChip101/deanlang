@@ -36,7 +36,7 @@ func Format(content string) string {
 func Interperet(content string) error {
 	variables := make(map[string]byte)
 	goto_points := make(map[string]int)
-	loaded := []byte{0}
+	main_byte := []byte{0}
 	referenced := ""
 	condition_state := 0
 
@@ -51,24 +51,24 @@ func Interperet(content string) error {
 
 		switch content[index] {
 		case ',': // unload current memory
-			loaded[0] = 0
+			main_byte[0] = 0
 		case '.': // load mentioned variable
-			loaded[0] = variables[referenced]
-		case '!': // write loaded memory
-			_, err := os.Stdout.Write(loaded)
+			main_byte[0] = variables[referenced]
+		case '!': // write main_byte memory
+			_, err := os.Stdout.Write(main_byte)
 			if err != nil {
 				return err
 			}
-		case '+': // increment loaded memory
-			loaded[0] += 1
-		case '-': // decrement loaded memory
-			loaded[0] -= 1
+		case '+': // increment main_byte
+			main_byte[0] += 1
+		case '-': // decrement main_byte
+			main_byte[0] -= 1
 		case ';': // forget mentioned variable
 			referenced = ""
 		case ':': // save mentioned variable
-			variables[referenced] = loaded[0]
+			variables[referenced] = main_byte[0]
 		case '?': // read to memory
-			_, err := os.Stdin.Read(loaded)
+			_, err := os.Stdin.Read(main_byte)
 			if err == io.EOF {
 				index++
 				continue
@@ -87,24 +87,24 @@ func Interperet(content string) error {
 			index = goto_points[referenced]
 			continue
 		case '<': // goto left
-			if index-int(loaded[0]) < 0 {
+			if index-int(main_byte[0]) < 0 {
 				index = 0
 				continue
 			}
-			index -= int(loaded[0])
+			index -= int(main_byte[0])
 			continue
 		case '>': // goto right
-			if index+int(loaded[0]) > len(content) {
+			if index+int(main_byte[0]) > len(content) {
 				return nil
 			}
-			index += int(loaded[0])
+			index += int(main_byte[0])
 			continue
 		case '|': // condition
-			if variables[referenced] == loaded[0] && condition_state == 0 {
+			if variables[referenced] == main_byte[0] && condition_state == 0 {
 				condition_state = 1
 				index++
 				continue
-			} else if variables[referenced] != loaded[0] && condition_state == 0 {
+			} else if variables[referenced] != main_byte[0] && condition_state == 0 {
 				condition_state = 2
 				index++
 				continue
