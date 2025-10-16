@@ -35,7 +35,7 @@ func Format(content string) string {
 
 func Interperet(content string) error {
 	variables := make(map[string]byte)
-	jump_points := make(map[string]int)
+	goto_points := make(map[string]int)
 	loaded := []byte{0}
 	referenced := ""
 	condition_state := 0
@@ -81,19 +81,19 @@ func Interperet(content string) error {
 				continue
 			}
 			referenced = referenced[:len(referenced)-1]
-		case '*': // start jump
-			jump_points[referenced] = index
-		case '&': // jump
-			index = jump_points[referenced]
+		case '*': // start goto
+			goto_points[referenced] = index
+		case '&': // goto
+			index = goto_points[referenced]
 			continue
-		case '<': // jump left
+		case '<': // goto left
 			if index-int(loaded[0]) < 0 {
 				index = 0
 				continue
 			}
 			index -= int(loaded[0])
 			continue
-		case '>': // jump right
+		case '>': // goto right
 			if index+int(loaded[0]) > len(content) {
 				return nil
 			}
