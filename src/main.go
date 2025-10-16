@@ -32,13 +32,16 @@ func Format(content string) string {
 	return new_content
 }
 
+type Reference struct {
+	ByteValue byte
+	GotoIndex int
+}
+
 func Interperet(content string) error {
-	variables := make(map[string]byte)
-	goto_points := make(map[string]int)
+	references := make(map[string]Reference)
 	main_byte := []byte{0}
 	referenced := ""
 	condition_state := 0
-
 	index := 0
 
 	for index < len(content) {
@@ -52,7 +55,7 @@ func Interperet(content string) error {
 		case ',': // unload current memory
 			main_byte[0] = 0
 		case '.': // load mentioned variable
-			main_byte[0] = variables[referenced]
+			main_byte[0] = references[referenced].ByteValue
 		case '!': // write main_byte memory
 			_, err := os.Stdout.Write(main_byte)
 			if err != nil {
@@ -65,7 +68,7 @@ func Interperet(content string) error {
 		case ';': // forget mentioned variable
 			referenced = ""
 		case ':': // save mentioned variable
-			variables[referenced] = main_byte[0]
+			references[referenced] = Reference{main_byte[0], references[referenced].GotoIndex}
 		case '?': // read to memory
 			_, err := os.Stdin.Read(main_byte)
 			if err != nil {
@@ -76,11 +79,11 @@ func Interperet(content string) error {
 				referenced = referenced[:len(referenced)-1]
 			}
 		case '*': // start goto
-			goto_points[referenced] = index
+			references[referenced] = Reference{references[referenced].ByteValue, index}
 		case '&': // goto
-			index = goto_points[referenced]
+			index = references[referenced].GotoIndex
 			continue
-		case '<': // goto left
+		case '<': // decrease jump distance
 			if index-int(main_byte[0]) < 0 {
 				index = 0
 				continue
@@ -94,18 +97,17 @@ func Interperet(content string) error {
 			index += int(main_byte[0])
 			continue
 		case '{': // condition check
-			if variables[referenced] == main_byte[0] && condition_state == 0 {
+			if references[referenced].ByteValue == main_byte[0] && condition_state == 0 {
 				condition_state = 1
-			} else if variables[referenced] != main_byte[0] && condition_state == 0 {
+			} else if references[referenced].ByteValue != main_byte[0] && condition_state == 0 {
 				condition_state = 2
 			}
 		case '}': // condition end
 			condition_state = 0
-		case '~': // do nothing
-			index++
-			continue
 		default: // append to reference
-			referenced += string(content[index])
+			if content[index] != '~' { // do nothing / no opp
+				referenced += string(content[index])
+			}
 		}
 		index++
 	}
