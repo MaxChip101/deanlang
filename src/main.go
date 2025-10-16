@@ -42,11 +42,10 @@ func Interperet(content string) error {
 
 	index := 0
 
-	for index < len(content) {
-
-		index++
+	for index < len(content)-1 {
 
 		if content[index] != '~' && condition_state == 2 {
+			index++
 			continue
 		}
 
@@ -71,6 +70,7 @@ func Interperet(content string) error {
 		case '?': // read to memory
 			_, err := os.Stdin.Read(loaded)
 			if err == io.EOF {
+				index++
 				continue
 			} else if err != nil {
 				return err
@@ -91,25 +91,31 @@ func Interperet(content string) error {
 				continue
 			}
 			index -= int(loaded[0])
+			continue
 		case '>': // jump right
 			if index+int(loaded[0]) > len(content) {
 				return nil
 			}
 			index += int(loaded[0])
+			continue
 		case '|': // condition
 			if variables[referenced] == loaded[0] && condition_state == 0 {
 				condition_state = 1
+				index++
 				continue
 			} else if variables[referenced] != loaded[0] && condition_state == 0 {
 				condition_state = 2
+				index++
 				continue
 			}
 			condition_state = 0
 		case '~': // do nothing
+			index++
 			continue
 		default:
 			referenced += string(content[index])
 		}
+		index++
 	}
 	return nil
 }
