@@ -43,7 +43,7 @@ func Interperet(content string) error {
 
 	for index < len(content) {
 
-		if content[index] != '|' && condition_state == 2 { // while false, skip everything besides the if statement end
+		if content[index] != '}' && condition_state == 2 { // while false, skip everything besides the if statement end
 			index++
 			continue
 		}
@@ -93,13 +93,13 @@ func Interperet(content string) error {
 			}
 			index += int(main_byte[0])
 			continue
-		case '$': // condition check
+		case '{': // condition check
 			if variables[referenced] == main_byte[0] && condition_state == 0 {
 				condition_state = 1
 			} else if variables[referenced] != main_byte[0] && condition_state == 0 {
 				condition_state = 2
 			}
-		case '|': // condition end
+		case '}': // condition end
 			condition_state = 0
 		case '~': // do nothing
 			index++
