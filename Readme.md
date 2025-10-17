@@ -28,7 +28,7 @@ This is a string of characters that can determine the variable being referenced,
 
 #### References
 
-These are spots in memory that store: singular bytes, and goto points.
+These are spots in memory that store: a singular byte, and goto points.
 
 ---
 
@@ -54,7 +54,17 @@ Decrementing decreases the main byte by one with a `-`.
 
 #### Variables
 
+Variables are the byte value of the reference.
 
+`:` saves the main byte's value to the referenced variable.
+
+`.` loads the referenced variable's byte value into the main byte.
+
+#### Reference Operators
+
+`;` clears the reference
+
+`/` deletes the last character of the reference
 
 #### Unloading
 
@@ -62,7 +72,13 @@ Unloading zeros out the main byte with `,`.
 
 #### If Statements
 
+If statements check if the referenced variable byte value is the same as the main byte's value. If statements cannot be stacked
 
+`{` starts an if statement, this is where the condition gets checked.
+
+`}` ends an if statement.
+
+If the condition is true, the code in the if statement will run, if not it will skip to the `}`
 #### Gotos
 
 Gotos allow for going to different points in a script.
@@ -73,7 +89,9 @@ Gotos allow for going to different points in a script.
 
 #### Jumps
 
+`<` jumps backwards by the amount in the main byte.
 
+`>` jumps forwards by the amount in the main byte.
 
 #### Do Nothing / No Opp
 
