@@ -10,13 +10,15 @@ deanlang is an interpereted esoteric scripting language
 
 The command to use deanlang is: `deanl`
 
-Some flags are: `--debug`
+Some flags are: `--debug` and `--help`
 
 deanlang scripts have a file extension of: `.dl`
 
 deanlang scripts are ran by doing: `deanl script.dl`
 
 deanlang can also debug what the script is doing under the hood: `deanl script.dl --debug`
+
+deanlang has a help command to help with understanding the interpereter: `deanl --help`
 
 The file extension for a deanlang script can be anything but it is recommended to use: `.dl` to tell that it is a deanlang script
 
