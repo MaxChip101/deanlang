@@ -1,0 +1,17 @@
+#
+-------------------------------
+    A function in deanlang
+-------------------------------
+#
+
+# start function #
++func* # increment main byte by one, refer to func that has an initial value of 0 #
+{ # won't start unless main byte == func byte #
+
++++++++++++++++++++
+;func_ret&
+};,
+
+
+
+,func_ret*{func&}!
