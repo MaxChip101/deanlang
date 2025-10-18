@@ -8,9 +8,17 @@ deanlang is an interpereted esoteric scripting language
 
 ### Usage
 
-the command to use deanlang is `deanl` which requires an input file which is the deanlang script.
+The command to use deanlang is: `deanl`
 
-The file extension for a deanlang script can be anything but it is recommended to use `.dl` to tell that it is a deanlang script
+Some flags are: `--debug`
+
+deanlang scripts have a file extension of: `.dl`
+
+deanlang scripts are ran by doing: `deanl script.dl`
+
+deanlang can also debug what the script is doing under the hood: `deanl script.dl --debug`
+
+The file extension for a deanlang script can be anything but it is recommended to use: `.dl` to tell that it is a deanlang script
 
 ---
 
@@ -38,7 +46,7 @@ There are only a few key words in the deanlang syntax.
 
 #### Comments
 
-The comments are `#`, comments must be sandwiched with another `#` to work, for example `# this is my comment #`.
+The comments are `#`, comments must be sandwiched with another `#` to work, for example: `# this is my comment #`.
 
 #### Increment / Decrement
 
@@ -83,9 +91,9 @@ If the condition is true, the code in the if statement will run, if not it will 
 
 Gotos allow for going to different points in a script.
 
-`*` starts a goto point with the label of what the reference is: `my_point*` creates a goto point with the label of `my_point`.
+`*` starts a goto point with the label of what the reference is: `my_point*` creates a goto point with the label of: `my_point`.
 
-`&` goes to a goto point with the label of the reference: `my_point&` goes to the point labeled `my_point`.
+`&` goes to a goto point with the label of the reference: `my_point&` goes to the point labeled: `my_point`.
 
 #### Jumps
 
