@@ -5,13 +5,12 @@
 #
 
 # start function #
-+func* # increment main byte by one, refer to func that has an initial value of 0 #
-{ # won't start unless main byte == func byte #
-
-+++++++++++++++++++
++func*
+{
+++++++++++++++++++++++++++++++++++++
 ;func_ret&
 };,
 
+#call func#
 
-
-,func_ret*{func&}!
+func_ret*;{func&}!
