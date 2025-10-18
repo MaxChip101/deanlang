@@ -143,6 +143,11 @@ func Interperet(content string, debug bool) error {
 	return nil
 }
 
+func Help() {
+	fmt.Println("flags:\n --help : prints information about the interpereter\n --debug : debugs a deanlang script")
+	os.Exit(0)
+}
+
 func main() {
 	exePath, err := os.Executable()
 	if err != nil {
@@ -166,13 +171,15 @@ func main() {
 	input_file := ""
 
 	if arg_len <= 1 {
-		log.Fatal("hello")
+		Help()
 	}
 
 	for _, flag := range args {
 		switch flag {
 		case "--debug":
 			debug_mode = true
+		case "--help":
+			Help()
 		default:
 			input_file = flag
 		}
