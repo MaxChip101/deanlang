@@ -143,6 +143,14 @@ func Interperet(content string, debug bool) error {
 	return nil
 }
 
+func Bake(content string) {
+
+}
+
+func Emit(content string) {
+
+}
+
 func Help() {
 	fmt.Println("flags:\n --help : prints information about the interpereter\n --debug : debugs a deanlang script")
 	os.Exit(0)
@@ -169,6 +177,8 @@ func main() {
 
 	debug_mode := false
 	input_file := ""
+	compile_method := "run"
+	fully_compile := false
 
 	if arg_len <= 1 {
 		Help()
@@ -178,6 +188,12 @@ func main() {
 		switch flag {
 		case "--debug":
 			debug_mode = true
+		case "--bake":
+			compile_method = "bake"
+		case "--emit":
+			compile_method = "emit"
+		case "--native":
+			fully_compile = true
 		case "--help":
 			Help()
 		default:
@@ -190,8 +206,14 @@ func main() {
 		log.Fatal(err)
 	}
 	content = Format(content)
-	err = Interperet(content, debug_mode)
-	if err != nil {
-		log.Fatal(err)
+
+	switch compile_method {
+	case "run":
+		err = Interperet(content, debug_mode)
+		if err != nil {
+			log.Fatal(err)
+		}
+	case "bake":
+
 	}
 }
