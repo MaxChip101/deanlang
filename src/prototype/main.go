@@ -8,6 +8,100 @@ import (
 	"strings"
 )
 
+func GetBakeStart() string {
+	return `package main
+
+import (
+	os
+)
+
+type Reference struct {
+	ByteValue byte
+	GotoIndex int
+}
+
+func main() {
+	content := "`
+}
+
+func GetBakeEnd() string {
+	return `"
+
+	references := make(map[string]Reference)
+	main_byte := []byte{0}
+	referenced := ""
+	condition_skip := false
+	index := 0
+
+	for index < len(content) {
+
+		if content[index] != '}' && condition_skip { // while false, skip everything besides the if statement end
+			index++
+			continue
+		}
+
+		switch content[index] {
+		case ',': // unload current memory
+			main_byte[0] = 0
+		case '.': // load referenced variable
+			main_byte[0] = references[referenced].ByteValue
+		case '!': // write main_byte memory
+			_, err := os.Stdout.Write(main_byte)
+			if err != nil {
+				return err
+			}
+		case '+': // increment main_byte
+			main_byte[0] += 1
+		case '-': // decrement main_byte
+			main_byte[0] -= 1
+		case ';': // forget mentioned variable
+			referenced = ""
+		case ':': // save mentioned variable
+			references[referenced] = Reference{main_byte[0], references[referenced].GotoIndex}
+		case '?': // read to memory
+			_, err := os.Stdin.Read(main_byte)
+			if err != nil {
+				return err
+			}
+		case '/': // remove last character from mentioned variable
+			if len(referenced) > 0 {
+				referenced = referenced[:len(referenced)-1]
+			}
+		case '*': // start goto
+			references[referenced] = Reference{references[referenced].ByteValue, index}
+		case '&': // goto
+			index = references[referenced].GotoIndex
+			continue
+		case '<': // decrease jump distance
+			if index-int(main_byte[0]) < 0 {
+				index = 0
+				continue
+			}
+			index -= int(main_byte[0])
+			continue
+		case '>': // goto right
+			if index+int(main_byte[0]) > len(content) {
+				return nil
+			}
+			index += int(main_byte[0])
+			continue
+		case '{': // condition check
+			if references[referenced].ByteValue != main_byte[0] && !condition_skip {
+				condition_skip = true
+			}
+		case '}': // condition end
+			condition_skip = false
+		default: // append to reference
+			if content[index] != '~' { // do nothing / no opp
+				referenced += string(content[index])
+			}
+		}
+		index++
+	}
+}
+`
+}
+
 func GetContent(path string) (string, error) {
 	data, err := os.ReadFile(path)
 	if err != nil {
@@ -143,8 +237,11 @@ func Interperet(content string, debug bool) error {
 	return nil
 }
 
-func Bake(content string) {
+func Bake(content string, path string) error {
+	data := fmt.Sprintf("%s%s%s", GetBakeStart(), content, GetBakeEnd())
 
+	err := os.WriteFile(path, []byte(data), 0644)
+	return err
 }
 
 func Emit(content string) {
@@ -178,13 +275,14 @@ func main() {
 	debug_mode := false
 	input_file := ""
 	compile_method := "run"
-	fully_compile := false
+	//fully_compile := false
+	output := "./main"
 
 	if arg_len <= 1 {
 		Help()
 	}
 
-	for _, flag := range args {
+	for index, flag := range args {
 		switch flag {
 		case "--debug":
 			debug_mode = true
@@ -192,8 +290,13 @@ func main() {
 			compile_method = "bake"
 		case "--emit":
 			compile_method = "emit"
-		case "--native":
-			fully_compile = true
+		case "-c":
+			//fully_compile = true
+		case "-o":
+			if index+1 > len(args) {
+				log.Fatal("no output directory")
+			}
+
 		case "--help":
 			Help()
 		default:
@@ -214,6 +317,9 @@ func main() {
 			log.Fatal(err)
 		}
 	case "bake":
-
+		err = Bake(content, output)
+		if err != nil {
+			log.Fatal(err)
+		}
 	}
 }
