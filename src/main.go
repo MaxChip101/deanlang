@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"strings"
 )
@@ -237,15 +238,16 @@ func Interperet(content string, debug bool) error {
 	return nil
 }
 
-func Bake(content string, path string) error {
+func Bake(content string, path string, fully_compile bool) error {
 	data := fmt.Sprintf("%s%s%s", GetBakeStart(), content, GetBakeEnd())
 
 	err := os.WriteFile(path, []byte(data), 0644)
+	if err != nil || !fully_compile {
+		return err
+	}
+
+	err = exec.Command("cc", path, "-o", path).Run()
 	return err
-}
-
-func Emit(content string) {
-
 }
 
 func Help() {
@@ -274,8 +276,8 @@ func main() {
 
 	debug_mode := false
 	input_file := ""
-	compile_method := "run"
-	//fully_compile := false
+	bake := false
+	fully_compile := true
 	output := "./main"
 
 	if arg_len <= 1 {
@@ -287,11 +289,9 @@ func main() {
 		case "--debug":
 			debug_mode = true
 		case "--bake":
-			compile_method = "bake"
-		case "--emit":
-			compile_method = "emit"
+			bake = true
 		case "-c":
-			//fully_compile = true
+			fully_compile = false
 		case "-o":
 			if index+1 > len(args) {
 				log.Fatal("no output directory")
@@ -310,14 +310,13 @@ func main() {
 	}
 	content = Format(content)
 
-	switch compile_method {
-	case "run":
+	if bake {
 		err = Interperet(content, debug_mode)
 		if err != nil {
 			log.Fatal(err)
 		}
-	case "bake":
-		err = Bake(content, output)
+	} else {
+		err = Bake(content, output, fully_compile)
 		if err != nil {
 			log.Fatal(err)
 		}
